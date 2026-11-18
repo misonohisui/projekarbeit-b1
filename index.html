@@ -579,13 +579,18 @@
     <button class="chip active" data-cat="Alle">Alle</button>
     <span class="result-count" id="resultCount"></span>
   </div>
+  <div class="filter-row" id="kelasRow" style="margin-top:0.6rem;">
+    <button class="chip active" data-kelas="Alle">Alle Klassen</button>
+    <button class="chip" data-kelas="Klasse A">Klasse A</button>
+    <button class="chip" data-kelas="Klasse B">Klasse B</button>
+  </div>
 </div>
 
 <div class="grid-wrap">
   <div class="article-grid" id="articleGrid"></div>
   <div class="no-results" id="noResults" style="display:none;">
     <strong>Keine Artikel gefunden</strong>
-    Coba kata kunci lain atau ganti filter kategori.
+    Coba kata kunci lain atau ganti filter kategori / kelas.
   </div>
 </div>
 
@@ -621,6 +626,7 @@
   const noResults = document.getElementById('noResults');
 
   let activeCategory = 'Alle';
+  let activeKelas = 'Alle';
 
   KATEGORI_LIST.forEach(function(kat) {
     const btn = document.createElement('button');
@@ -637,7 +643,7 @@
     card.className = 'article-card';
     card.dataset.id = item.id;
     card.innerHTML =
-      '<div class="card-top"><span class="card-tag">' + item.kategori + '</span></div>' +
+      '<div class="card-top"><span class="card-tag">' + item.kategori + '</span><span class="card-tag" style="margin-left:0.4rem;opacity:0.8;">' + item.kelas + '</span></div>' +
       '<h3>' + item.judul + '</h3>' +
       '<p class="snippet">' + item.ringkasan + '</p>' +
       '<div class="card-footer">' +
@@ -653,8 +659,9 @@
     const q = searchInput.value.trim().toLowerCase();
     const filtered = daftarArtikel.filter(function(item) {
       const matchCat = activeCategory === 'Alle' || item.kategori === activeCategory;
+      const matchKelas = activeKelas === 'Alle' || item.kelas === activeKelas;
       const matchQuery = !q || item.nama.toLowerCase().includes(q) || item.judul.toLowerCase().includes(q);
-      return matchCat && matchQuery;
+      return matchCat && matchKelas && matchQuery;
     });
 
     grid.innerHTML = '';
@@ -672,6 +679,15 @@
     filterRow.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
     e.target.classList.add('active');
     activeCategory = e.target.dataset.cat;
+    applyFilters();
+  });
+
+  const kelasRow = document.getElementById('kelasRow');
+  kelasRow.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('chip')) return;
+    kelasRow.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+    e.target.classList.add('active');
+    activeKelas = e.target.dataset.kelas;
     applyFilters();
   });
 

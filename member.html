@@ -472,6 +472,11 @@
     <button class="chip active" data-cat="Alle">Alle</button>
     <span class="result-count" id="resultCount"></span>
   </div>
+  <div class="filter-row" id="kelasRow" style="margin-top:0.6rem;">
+    <button class="chip active" data-kelas="Alle">Alle Klassen</button>
+    <button class="chip" data-kelas="Klasse A">Klasse A</button>
+    <button class="chip" data-kelas="Klasse B">Klasse B</button>
+  </div>
 </div>
 
 <div class="grid-wrap">
@@ -517,6 +522,7 @@
   const noResults = document.getElementById('noResults');
 
   let activeCategory = 'Alle';
+  let activeKelas = 'Alle';
 
   KATEGORI_LIST.forEach(function(kat) {
     const btn = document.createElement('button');
@@ -545,8 +551,9 @@
     const q = searchInput.value.trim().toLowerCase();
     const filtered = daftarArtikel.filter(function(item) {
       const matchCat = activeCategory === 'Alle' || item.kategori === activeCategory;
+      const matchKelas = activeKelas === 'Alle' || item.kelas === activeKelas;
       const matchQuery = !q || item.nama.toLowerCase().includes(q);
-      return matchCat && matchQuery;
+      return matchCat && matchKelas && matchQuery;
     });
 
     grid.innerHTML = '';
@@ -558,6 +565,15 @@
     }
     resultCount.textContent = filtered.length + ' von ' + daftarArtikel.length + ' Autor:innen';
   }
+
+  const kelasRow = document.getElementById('kelasRow');
+  kelasRow.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('chip')) return;
+    kelasRow.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+    e.target.classList.add('active');
+    activeKelas = e.target.dataset.kelas;
+    applyFilters();
+  });
 
   filterRow.addEventListener('click', function(e) {
     if (!e.target.classList.contains('chip')) return;
